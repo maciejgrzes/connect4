@@ -4,6 +4,11 @@
 #ifndef VARS
 #define VARS
 
+struct Cell {
+    int row;
+    int col;
+};
+
 const Color semi_red = {255, 0, 0, 64};
 const Color semi_green = {0, 255, 0, 64};
 
