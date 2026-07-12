@@ -8,7 +8,7 @@ int main() {
     InitWindow(WIDTH, HEIGHT, "Connect Four");
     SetTargetFPS(60);
 
-    int turn = 1;
+    int turn = 0;
 
     bool game_over = false;
 
@@ -23,23 +23,10 @@ int main() {
         {0, 0, 0, 0, 0, 0, 0}
     };
 
-    while (!game_over && !WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(BLACK);
-
-        DrawRectangleRounded(BoardBackground, 0.1, 15, GRAY);
-
-
-        for (int j = 0; j < ROWS; j++) {
-            for (int i = 0; i < COLS; i++) {
-                DrawCircle(board_top_left_x_for_holes + i * (hole_diameter + gap_between_holes), 
-                           board_top_left_y_for_holes + j * (hole_diameter + gap_between_holes), 
-                           50, BLACK);
-            }
-        }
-
+    while (!WindowShouldClose()) {
+        // Game logic
+        Vector2 pos = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            Vector2 pos = GetMousePosition();
             if (CheckCollisionPointRec(pos, column_one)) {
                 if (heights[0] >= 0) {
                     board[heights[0]][0] = (turn % 2 == 0) ? 1 : 2;
@@ -85,19 +72,65 @@ int main() {
             }
         }
 
+
+        // Drawing
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        DrawRectangleRounded(BoardBackground, 0.1, 15, GRAY);
+
+        for (int j = 0; j < ROWS; j++) {
+            for (int i = 0; i < COLS; i++) {
+                DrawCircle(board_top_left_x_for_holes + i * (hole_diameter + gap_between_holes), 
+                           board_top_left_y_for_holes + j * (hole_diameter + gap_between_holes), 
+                           50, BLACK);
+            }
+        }
+
+        if (CheckCollisionPointRec(pos, column_one)) {
+            DrawCircle(board_top_left_x_for_holes + 0 * (hole_diameter + gap_between_holes), 
+                    board_top_left_y_for_holes + heights[0] * (hole_diameter + gap_between_holes), 
+                    50, (turn % 2 == 0) ? semi_red : semi_green);
+        } else if (CheckCollisionPointRec(pos, column_two)) {
+            DrawCircle(board_top_left_x_for_holes + 1 * (hole_diameter + gap_between_holes), 
+                    board_top_left_y_for_holes + heights[1] * (hole_diameter + gap_between_holes), 
+                    50, (turn % 2 == 0) ? semi_red : semi_green);
+        } else if (CheckCollisionPointRec(pos, column_three)) {
+            DrawCircle(board_top_left_x_for_holes + 2 * (hole_diameter + gap_between_holes), 
+                    board_top_left_y_for_holes + heights[2] * (hole_diameter + gap_between_holes), 
+                    50, (turn % 2 == 0) ? semi_red : semi_green);
+        } else if (CheckCollisionPointRec(pos, column_four)) {
+            DrawCircle(board_top_left_x_for_holes + 3 * (hole_diameter + gap_between_holes), 
+                    board_top_left_y_for_holes + heights[3] * (hole_diameter + gap_between_holes), 
+                    50, (turn % 2 == 0) ? semi_red : semi_green);
+        } else if (CheckCollisionPointRec(pos, column_five)) {
+            DrawCircle(board_top_left_x_for_holes + 4 * (hole_diameter + gap_between_holes), 
+                    board_top_left_y_for_holes + heights[4] * (hole_diameter + gap_between_holes), 
+                    50, (turn % 2 == 0) ? semi_red : semi_green);
+        } else if (CheckCollisionPointRec(pos, column_six)) {
+            DrawCircle(board_top_left_x_for_holes + 5 * (hole_diameter + gap_between_holes), 
+                    board_top_left_y_for_holes + heights[5] * (hole_diameter + gap_between_holes), 
+                    50, (turn % 2 == 0) ? semi_red : semi_green);
+        } else if (CheckCollisionPointRec(pos, column_seven)) {
+            DrawCircle(board_top_left_x_for_holes + 6 * (hole_diameter + gap_between_holes), 
+                    board_top_left_y_for_holes + heights[6] * (hole_diameter + gap_between_holes), 
+                    50, (turn % 2 == 0) ? semi_red : semi_green);
+        }
+
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 if (board[i][j] == 1) {
                     DrawCircle(board_top_left_x_for_holes + j * (hole_diameter + gap_between_holes),
-                            board_top_left_y_for_holes + i * (hole_diameter + gap_between_holes), 
-                            50, RED);
+                               board_top_left_y_for_holes + i * (hole_diameter + gap_between_holes), 
+                               50, RED);
                 } else if (board[i][j] == 2) {
                     DrawCircle(board_top_left_x_for_holes + j * (hole_diameter + gap_between_holes),
-                            board_top_left_y_for_holes + i * (hole_diameter + gap_between_holes), 
-                            50, GREEN);
+                               board_top_left_y_for_holes + i * (hole_diameter + gap_between_holes), 
+                               50, GREEN);
                 }
             }
         }
+
 
         if (check_win(board, 1)) {
             DrawText("Player 1 Wins!", 50, 50, 50, WHITE);
@@ -108,5 +141,25 @@ int main() {
         }
 
         EndDrawing();
+
+        if (game_over) {
+            WaitTime(5);
+            game_over = false;
+
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLS; j++) {
+                    board[i][j] = 0;
+                }
+            }
+
+            for (int i = 0; i < COLS; i++) {
+                heights[i] = 5;
+            }
+
+        }
+
     }
+
+    CloseWindow();
+    return 0;
 }

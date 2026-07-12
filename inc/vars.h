@@ -4,6 +4,9 @@
 #ifndef VARS
 #define VARS
 
+const Color semi_red = {255, 0, 0, 64};
+const Color semi_green = {0, 255, 0, 64};
+
 const int WIDTH = 1400;
 const int HEIGHT = 800;
 
