@@ -1,27 +1,29 @@
 #include "vars.h"
 #include <cmath>
 #include <raylib.h>
+#include <vector>
 
 void DrawStar(Vector2 center, float outerRadius, float innerRadius, int points, Color color) {
-    const float PI2 = 2.0f * PI;
-    const int vertexCount = points * 2 + 2;
-
-    Vector2 vertices[64];
-
-    vertices[0] = center;
-
-    for (int i = 0; i <= points * 2; i++)
+    for (int i = 0; i < points * 2; i++)
     {
-        float angle = -PI / 2.0f + i * PI / points;
-        float radius = (i % 2 == 0) ? outerRadius : innerRadius;
+        float angle1 = -PI / 2 + i * PI / points;
+        float angle2 = -PI / 2 + (i + 1) * PI / points;
 
-        vertices[i + 1] = {
-            center.x + cosf(angle) * radius,
-            center.y + sinf(angle) * radius
+        float r1 = (i % 2 == 0) ? outerRadius : innerRadius;
+        float r2 = ((i + 1) % 2 == 0) ? outerRadius : innerRadius;
+
+        Vector2 p1 = {
+            center.x + cosf(angle1) * r1,
+            center.y + sinf(angle1) * r1
         };
-    }
 
-    DrawTriangleFan(vertices, vertexCount, color);
+        Vector2 p2 = {
+            center.x + cosf(angle2) * r2,
+            center.y + sinf(angle2) * r2
+        };
+
+        DrawTriangle(center, p2, p1, color);
+    }
 }
 
 
@@ -89,21 +91,21 @@ bool CheckWin(int board[ROWS][COLS], int player) {
     return false;
 }
 
-bool FindWinningLine(int board[ROWS][COLS], Cell (&winningCells)[4]) {
+bool FindWinningLine(int board[ROWS][COLS], int player, std::vector<Cell> (&winningCells)) {
     // Horizontal
     for (int r = 0; r < ROWS; r++)
     {
         for (int c = 0; c <= COLS - 4; c++)
         {
-            if (board[r][c] != 0 &&
-                board[r][c+1] != 0 &&
-                board[r][c+2] != 0 &&
-                board[r][c+3] != 0)
+            if (board[r][c] == player &&
+                board[r][c+1] == player &&
+                board[r][c+2] == player &&
+                board[r][c+3] == player)
             {
-                winningCells[0] = {r, c};
-                winningCells[1] = {r, c+1};
-                winningCells[2] = {r, c+2};
-                winningCells[3] = {r, c+3};
+                winningCells.push_back({r, c});
+                winningCells.push_back({r, c+1});
+                winningCells.push_back({r, c+2});
+                winningCells.push_back({r, c+3});
                 return true;
             }
         }
@@ -114,15 +116,15 @@ bool FindWinningLine(int board[ROWS][COLS], Cell (&winningCells)[4]) {
     {
         for (int c = 0; c < COLS; c++)
         {
-            if (board[r][c] != 0 &&
-                board[r+1][c] != 0 &&
-                board[r+2][c] != 0 &&
-                board[r+3][c] != 0)
+            if (board[r][c] == player &&
+                board[r+1][c] == player &&
+                board[r+2][c] == player &&
+                board[r+3][c] == player)
             {
-                winningCells[0] = {r, c};
-                winningCells[1] = {r+1, c};
-                winningCells[2] = {r+2, c};
-                winningCells[3] = {r+3, c};
+                winningCells.push_back({r, c});
+                winningCells.push_back({r+1, c});
+                winningCells.push_back({r+2, c});
+                winningCells.push_back({r+3, c});
                 return true;
             }
         }
@@ -133,15 +135,15 @@ bool FindWinningLine(int board[ROWS][COLS], Cell (&winningCells)[4]) {
     {
         for (int c = 0; c <= COLS - 4; c++)
         {
-            if (board[r][c] != 0 &&
-                board[r-1][c+1] != 0 &&
-                board[r-2][c+2] != 0 &&
-                board[r-3][c+3] != 0)
+            if (board[r][c] == player &&
+                board[r-1][c+1] == player &&
+                board[r-2][c+2] == player &&
+                board[r-3][c+3] == player)
             {
-                winningCells[0] = {r, c};
-                winningCells[1] = {r-1, c+1};
-                winningCells[2] = {r-2, c+2};
-                winningCells[3] = {r-3, c+3};
+                winningCells.push_back({r, c});
+                winningCells.push_back({r-1, c+1});
+                winningCells.push_back({r-2, c+2});
+                winningCells.push_back({r-3, c+3});
                 return true;
             }
         }
@@ -152,15 +154,15 @@ bool FindWinningLine(int board[ROWS][COLS], Cell (&winningCells)[4]) {
     {
         for (int c = 0; c <= COLS - 4; c++)
         {
-            if (board[r][c] != 0 &&
-                board[r+1][c+1] != 0 &&
-                board[r+2][c+2] != 0 &&
-                board[r+3][c+3] != 0)
+            if (board[r][c] == player &&
+                board[r+1][c+1] == player &&
+                board[r+2][c+2] == player &&
+                board[r+3][c+3] == player)
             {
-                winningCells[0] = {r, c};
-                winningCells[1] = {r+1, c+1};
-                winningCells[2] = {r+2, c+2};
-                winningCells[3] = {r+3, c+3};
+                winningCells.push_back({r, c});
+                winningCells.push_back({r+1, c+1});
+                winningCells.push_back({r+2, c+2});
+                winningCells.push_back({r+3, c+3});
                 return true;
             }
         }
@@ -181,10 +183,26 @@ void DrawHoles() {
 
 void DrawPreview(Vector2 pos, Rectangle columns[7], int heights[7], int turn) {
     for (int i = 0; i < COLS; i++) {
-        if (CheckCollisionPointRec(pos, columns[i])) {
+        if (CheckCollisionPointRec(pos, columns[i]) && heights[i] >= 0) {
             DrawCircle(board_top_left_x_for_holes + i * (hole_diameter + gap_between_holes), 
                     board_top_left_y_for_holes + heights[i] * (hole_diameter + gap_between_holes), 
                     50, (turn % 2 == 0) ? semi_red : semi_green);
         }
     }   
+}
+
+void DrawChips(int board[ROWS][COLS]) {
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if (board[i][j] == 1) {
+                DrawCircle(board_top_left_x_for_holes + j * (hole_diameter + gap_between_holes),
+                           board_top_left_y_for_holes + i * (hole_diameter + gap_between_holes), 
+                           50, RED);
+            } else if (board[i][j] == 2) {
+                DrawCircle(board_top_left_x_for_holes + j * (hole_diameter + gap_between_holes),
+                           board_top_left_y_for_holes + i * (hole_diameter + gap_between_holes), 
+                           50, GREEN);
+            }
+        }
+    }
 }

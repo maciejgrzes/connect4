@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <vector>
 
 #include "inc/vars.h"
 #include "inc/funcs.h"
@@ -24,14 +25,9 @@ int main() {
         column_seven
     };
 
-    int board[ROWS][COLS] = {
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0}
-    };
+    int board[ROWS][COLS] = {};
+
+    vector<Cell> winningCells;
 
     while (!WindowShouldClose()) {
 
@@ -54,26 +50,25 @@ int main() {
         DrawRectangleRounded(BoardBackground, 0.1, 15, GRAY);
         DrawHoles();
         DrawPreview(pos, columns, heights, turn);
+        DrawChips(board);
 
         if (CheckWin(board, 1)) {
-            DrawText("Player 1 Wins!", 50, 50, 50, WHITE);
+            DrawText("Player 1 Wins!", 50, 50, 30, WHITE);
             game_over = true;
         } else if (CheckWin(board, 2)) {
             DrawText("Player 2 Wins!", 50, 50, 50, WHITE);
             game_over = true;
         }
 
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
-                if (board[i][j] == 1) {
-                    DrawCircle(board_top_left_x_for_holes + j * (hole_diameter + gap_between_holes),
-                               board_top_left_y_for_holes + i * (hole_diameter + gap_between_holes), 
-                               50, RED);
-                } else if (board[i][j] == 2) {
-                    DrawCircle(board_top_left_x_for_holes + j * (hole_diameter + gap_between_holes),
-                               board_top_left_y_for_holes + i * (hole_diameter + gap_between_holes), 
-                               50, GREEN);
-                }
+
+        if (FindWinningLine(board, 1, winningCells) || FindWinningLine(board, 2, winningCells)) {
+            for (int i = 0; i < 4; i++) {
+                Vector2 starPos = {
+                    (float)(board_top_left_x_for_holes + winningCells[i].col * (hole_diameter + gap_between_holes)),
+                    (float)(board_top_left_y_for_holes + winningCells[i].row * (hole_diameter + gap_between_holes))
+                };
+
+                DrawStar(starPos, 30, 10, 5, GOLD);
             }
         }
 
