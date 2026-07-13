@@ -78,6 +78,8 @@ int main() {
             winningCells.clear();
         }
 
+        EndGame(game_over, board, heights, winningCells);
+
     }
 
     CloseWindow();

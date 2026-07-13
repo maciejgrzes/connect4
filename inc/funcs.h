@@ -20,3 +20,5 @@ void DrawHoles();
 void DrawPreview(Vector2 pos, int heights[7], int turn);
 
 void DrawChips(int board[ROWS][COLS]);
+
+void EndGame(bool (&game_over), int (&board)[ROWS][COLS], int (&heights)[COLS], std::vector<Cell> (&winningCells));

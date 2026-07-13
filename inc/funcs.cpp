@@ -220,3 +220,22 @@ void DrawChips(int board[ROWS][COLS]) {
         }
     }
 }
+
+void EndGame(bool (&game_over), int (&board)[ROWS][COLS], int (&heights)[COLS], std::vector<Cell> (&winningCells)) {
+    if (game_over) {
+        WaitTime(5);
+        game_over = false;
+
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                board[i][j] = 0;
+            }
+        }
+
+        for (int i = 0; i < COLS; i++) {
+            heights[i] = 5;
+        }
+
+        winningCells.clear();
+    }
+}
