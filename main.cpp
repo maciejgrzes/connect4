@@ -3,6 +3,7 @@
 
 #include "inc/vars.h"
 #include "inc/funcs.h"
+#include "inc/structs.h"
 using namespace std;
 
 int main() {
@@ -15,16 +16,6 @@ int main() {
 
     int heights[COLS] = {5, 5, 5, 5, 5, 5, 5};
 
-    Rectangle columns[7] = {
-        column_one,
-        column_two,
-        column_three,
-        column_four,
-        column_five,
-        column_six,
-        column_seven
-    };
-
     int board[ROWS][COLS] = {};
 
     vector<Cell> winningCells;
@@ -33,8 +24,8 @@ int main() {
 
         Vector2 pos = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            for (int i = 0; i < 7; i++) {
-                if (CheckCollisionPointRec(pos, columns[i])) {
+            for (int i = 0; i < COLS; i++) {
+                if (CheckCollisionPointRec(pos, GetColumnRect(i))) {
                     if (heights[i] >= 0) {
                         board[heights[i]][i] = (turn % 2 == 0) ? 1 : 2;
                         heights[i]--;
@@ -49,7 +40,7 @@ int main() {
 
         DrawRectangleRounded(BoardBackground, 0.1, 15, GRAY);
         DrawHoles();
-        DrawPreview(pos, columns, heights, turn);
+        DrawPreview(pos, heights, turn);
         DrawChips(board);
 
         if (CheckWin(board, 1)) {
@@ -63,11 +54,7 @@ int main() {
 
         if (FindWinningLine(board, 1, winningCells) || FindWinningLine(board, 2, winningCells)) {
             for (int i = 0; i < 4; i++) {
-                Vector2 starPos = {
-                    (float)(board_top_left_x_for_holes + winningCells[i].col * (hole_diameter + gap_between_holes)),
-                    (float)(board_top_left_y_for_holes + winningCells[i].row * (hole_diameter + gap_between_holes))
-                };
-
+                Vector2 starPos = CellToScreen(winningCells[i].row, winningCells[i].col);
                 DrawStar(starPos, 30, 10, 5, GOLD);
             }
         }
@@ -88,6 +75,7 @@ int main() {
                 heights[i] = 5;
             }
 
+            winningCells.clear();
         }
 
     }

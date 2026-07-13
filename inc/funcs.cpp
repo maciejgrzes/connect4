@@ -1,7 +1,26 @@
+#include "funcs.h"
+
 #include "vars.h"
+#include "structs.h"
 #include <cmath>
 #include <raylib.h>
 #include <vector>
+
+Rectangle GetColumnRect(int col) {
+    return {
+        (float)(board_top_left_x + col * (hole_diameter + gap_between_holes)),
+        board_top_left_y,
+        hole_diameter + gap_between_holes,
+        B_HEIGHT
+    };
+}
+
+Vector2 CellToScreen(int col, int row) {
+    return {
+        (float)(board_top_left_x_for_holes + row * (hole_diameter + gap_between_holes)),
+        (float)(board_top_left_y_for_holes + col * (hole_diameter + gap_between_holes))
+    };
+}
 
 void DrawStar(Vector2 center, float outerRadius, float innerRadius, int points, Color color) {
     for (int i = 0; i < points * 2; i++)
@@ -174,19 +193,17 @@ bool FindWinningLine(int board[ROWS][COLS], int player, std::vector<Cell> (&winn
 void DrawHoles() {
     for (int j = 0; j < ROWS; j++) {
         for (int i = 0; i < COLS; i++) {
-            DrawCircle(board_top_left_x_for_holes + i * (hole_diameter + gap_between_holes), 
-                       board_top_left_y_for_holes + j * (hole_diameter + gap_between_holes), 
-                       50, BLACK);
+            Vector2 pos = CellToScreen(j, i);
+            DrawCircle(pos.x, pos.y, hole_radius, BLACK);
         }
     }
 }
 
-void DrawPreview(Vector2 pos, Rectangle columns[7], int heights[7], int turn) {
+void DrawPreview(Vector2 pos, int heights[7], int turn) {
     for (int i = 0; i < COLS; i++) {
-        if (CheckCollisionPointRec(pos, columns[i]) && heights[i] >= 0) {
-            DrawCircle(board_top_left_x_for_holes + i * (hole_diameter + gap_between_holes), 
-                    board_top_left_y_for_holes + heights[i] * (hole_diameter + gap_between_holes), 
-                    50, (turn % 2 == 0) ? semi_red : semi_green);
+        if (CheckCollisionPointRec(pos, GetColumnRect(i)) && heights[i] >= 0) {
+            Vector2 pos = CellToScreen(heights[i], i);
+            DrawCircle(pos.x, pos.y, hole_radius, (turn % 2 == 0) ? semi_red : semi_green);
         }
     }   
 }
@@ -194,14 +211,11 @@ void DrawPreview(Vector2 pos, Rectangle columns[7], int heights[7], int turn) {
 void DrawChips(int board[ROWS][COLS]) {
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
+            Vector2 pos = CellToScreen(i, j);
             if (board[i][j] == 1) {
-                DrawCircle(board_top_left_x_for_holes + j * (hole_diameter + gap_between_holes),
-                           board_top_left_y_for_holes + i * (hole_diameter + gap_between_holes), 
-                           50, RED);
+                DrawCircle(pos.x, pos.y, hole_radius, RED);
             } else if (board[i][j] == 2) {
-                DrawCircle(board_top_left_x_for_holes + j * (hole_diameter + gap_between_holes),
-                           board_top_left_y_for_holes + i * (hole_diameter + gap_between_holes), 
-                           50, GREEN);
+                DrawCircle(pos.x, pos.y, hole_radius, GREEN);
             }
         }
     }
