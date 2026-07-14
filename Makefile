@@ -1,19 +1,19 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++20
-LIBS := -lraylib
 
-TARGET = main
-SRC = main.cpp
+SRC = main.cpp \
+      inc/funcs.cpp \
+      inc/structs.cpp
+
+TARGET = connect4
 
 all: $(TARGET)
 
 $(TARGET): $(SRC)
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET) -lraylib
 
 clean:
 	rm -f $(TARGET)
 
 run: $(TARGET)
 	./$(TARGET)
-
-.PHONY: all clean run
