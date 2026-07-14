@@ -3,8 +3,11 @@
 #include <raylib.h>
 
 
-const Color semi_red = {255, 0, 0, 64};
-const Color semi_green = {0, 255, 0, 64};
+const Color semi_red = {255, 36, 00, 64};
+const Color semi_blue = {55, 55, 255, 255}; 
+
+const Color red =  {255, 36, 00, 255};
+const Color blue = {55, 55, 255, 255}; 
 
 constexpr int WIDTH = 1400;
 constexpr int HEIGHT = 800;

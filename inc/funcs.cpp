@@ -203,7 +203,7 @@ void DrawPreview(Vector2 pos, int heights[7], int turn) {
     for (int i = 0; i < COLS; i++) {
         if (CheckCollisionPointRec(pos, GetColumnRect(i)) && heights[i] >= 0) {
             Vector2 pos = CellToScreen(heights[i], i);
-            DrawCircle(pos.x, pos.y, hole_radius, (turn % 2 == 0) ? semi_red : semi_green);
+            DrawCircle(pos.x, pos.y, hole_radius, (turn % 2 == 0) ? semi_red : semi_blue);
         }
     }   
 }
@@ -213,9 +213,9 @@ void DrawChips(int board[ROWS][COLS]) {
         for (int j = 0; j < COLS; j++) {
             Vector2 pos = CellToScreen(i, j);
             if (board[i][j] == 1) {
-                DrawCircle(pos.x, pos.y, hole_radius, RED);
+                DrawCircle(pos.x, pos.y, 50, red);
             } else if (board[i][j] == 2) {
-                DrawCircle(pos.x, pos.y, hole_radius, GREEN);
+                DrawCircle(pos.x, pos.y, 50, blue);
             }
         }
     }
