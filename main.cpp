@@ -1,8 +1,8 @@
 #include <raylib.h>
 
-#include "../inc/vars.h"
-#include "../inc/funcs.h"
-#include "../inc/structs.h"
+#include "inc/vars.h"
+#include "inc/funcs.h"
+#include "inc/structs.h"
 using namespace std;
 
 int main() {

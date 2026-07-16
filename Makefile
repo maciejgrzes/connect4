@@ -5,7 +5,7 @@ SRC = main.cpp \
       inc/funcs.cpp \
       inc/structs.cpp
 
-SRC_SERVER = server/server.cpp
+SRC_SERVER = network/server/server.cpp
 
 TARGET = connect4
 TARGET_SERVER = serv
