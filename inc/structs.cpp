@@ -1,6 +1,6 @@
-#include "structs.h"
-#include "funcs.h"
-#include "vars.h"
+#include "structs.hpp"
+#include "funcs.hpp"
+#include "vars.hpp"
 #include <vector>
 
 bool Game::CheckWin(int player) {

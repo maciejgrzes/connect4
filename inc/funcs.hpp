@@ -1,9 +1,7 @@
 #pragma once
 
-#include "vars.h"
-#include "structs.h"
+#include "structs.hpp"
 #include <raylib.h>
-#include <vector>
 
 Rectangle GetColumnRect(int col);
 

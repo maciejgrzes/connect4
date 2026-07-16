@@ -1,6 +1,6 @@
-#include "inc/enet.h"
+#include "../inc/enet.h"
 
-#include "inc/servertypes.h"
+#include "../inc/nttypes.hpp"
 
 #include <iostream>
 
@@ -12,7 +12,7 @@ int main() {
         return 1;
     }
 
-    ENetAddress addr = {0};
+    ENetAddress addr = {};
     const int MAX_CLIENTS = 2;
 
     addr.host = ENET_HOST_ANY;

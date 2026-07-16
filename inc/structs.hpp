@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vars.h"
+#include "vars.hpp"
 #include <vector>
 
 struct Cell {

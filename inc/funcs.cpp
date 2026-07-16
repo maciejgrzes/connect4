@@ -1,7 +1,7 @@
-#include "funcs.h"
+#include "funcs.hpp"
+#include "vars.hpp"
+#include "structs.hpp"
 
-#include "vars.h"
-#include "structs.h"
 #include <cmath>
 #include <raylib.h>
 
