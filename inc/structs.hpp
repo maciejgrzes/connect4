@@ -27,5 +27,5 @@ struct Game {
 
     void EndGame();
 
-    void MakeMove();
+    void MakeMove(int player, int column);
 };

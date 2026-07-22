@@ -15,7 +15,9 @@ int main() {
 
         Vector2 pos = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            game.MakeMove();
+            for (int i = 0; i < COLS; i++)
+                if (CheckCollisionPointRec(pos, GetColumnRect(i)))
+                    game.MakeMove((game.turn % 2 == 0) ? 1 : 2, i);
         }
 
         if (game.CheckWin(1)) {

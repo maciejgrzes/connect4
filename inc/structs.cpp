@@ -1,5 +1,4 @@
 #include "structs.hpp"
-#include "funcs.hpp"
 #include "vars.hpp"
 #include <vector>
 
@@ -150,7 +149,7 @@ bool Game::FindWinningLine(int player) {
 
 void Game::EndGame() {
     if (game_over) {
-        WaitTime(5);
+        WaitTime(2);
         game_over = false;
 
         for (int i = 0; i < ROWS; i++) {
@@ -167,15 +166,10 @@ void Game::EndGame() {
     }
 }
 
-void Game::MakeMove() {
-    Vector2 pos = GetMousePosition();
-    for (int i = 0; i < COLS; i++) {
-        if (CheckCollisionPointRec(pos, GetColumnRect(i))) {
-            if (heights[i] >= 0) {
-                board[heights[i]][i] = (turn % 2 == 0) ? 1 : 2;
-                heights[i]--;
-                turn++;
-            }
-        }
+void Game::MakeMove(int player, int column) {
+    if (heights[column] >= 0) {
+        board[heights[column]][column] = player;
+        heights[column]--;
+        turn++;
     }
 }
