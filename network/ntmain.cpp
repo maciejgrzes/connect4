@@ -3,7 +3,7 @@
 int main() {
     Server server;
 
-    if (!server.Start(7777)) {
+    if (!server.Start(7777, 2)) {
         return 1;
     }
 

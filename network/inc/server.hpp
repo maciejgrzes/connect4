@@ -1,6 +1,7 @@
 #pragma once
 
 #include <enet/enet.h>
+#include <list>
 
 #include "../../inc/structs.hpp"
 #include "player.hpp"
@@ -8,17 +9,17 @@
 class Server {
 public:
 
-    bool Start(int port);
+    bool Start(int port, int maxClients);
 
     void Run();
 
 private:
 
-    void HandleConnect(ENetEvent&);
+    void HandleConnect(ENetEvent& event);
 
-    void HandleDisconnect(ENetEvent&);
+    void HandleDisconnect(ENetEvent& event);
 
-    void HandlePacket(ENetEvent&);
+    void HandlePacket(ENetEvent& event);
 
     void SendBoard();
 
@@ -27,7 +28,7 @@ private:
 
     ENetHost* host = nullptr;
 
-    Player players[2];
+    std::list<Player> players;
 
     Game game;
 };

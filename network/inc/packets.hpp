@@ -1,21 +1,19 @@
 #pragma once
 
-enum PacketType
-{
+enum PacketType {
     MOVE,
     BOARD_UPDATE,
     GAME_OVER,
     PLAYER_JOINED
 };
 
-struct MovePacket
-{
+struct MovePacket {
     PacketType type;
     int column;
+    int player;
 };
 
-struct BoardPacket
-{
+struct BoardPacket {
     PacketType type;
     int board[6][7];
 };
