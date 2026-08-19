@@ -34,7 +34,7 @@ int main() {
     bool winLineFound = false;
 
     Client netClient;
-    const char* ip = "127.0.0.1";
+    const char* ip = "192.168.1.6";
 
     while (!WindowShouldClose()) {
         Vector2 pos = GetMousePosition();
