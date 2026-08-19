@@ -7,6 +7,7 @@ CLIENT_SRCS = src/main.cpp src/inc/funcs.cpp src/inc/structs.cpp src/inc/button.
 INCLUDES := -Iinclude -Inetwork/inc -Iclient/inc
 
 ifeq ($(OS),Windows_NT)
+    CXXFLAGS += -DWIN32_LEAN_AND_MEAN -DNOGDI -DNOUSER -DNOMINMAX
     EXE_EXT = .exe
     LIBS = -lenet -lraylib -lopengl32 -lgdi32 -lwinmm -lws2_32
     STATIC_FLAGS = -static -static-libgcc -static-libstdc++
