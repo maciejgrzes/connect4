@@ -8,4 +8,6 @@ struct Player {
     int id = -1;
 
     bool connected = false;
+
+    bool ready = false;
 };

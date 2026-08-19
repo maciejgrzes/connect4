@@ -1,19 +1,30 @@
 #pragma once
 
+#include <cstdint>
 enum PacketType {
     MOVE,
     BOARD_UPDATE,
     GAME_OVER,
-    PLAYER_JOINED
+    PLAYER_JOINED,
+    READY
 };
 
 struct MovePacket {
     PacketType type;
-    int column;
-    int player;
+    uint8_t column;
+    uint8_t player;
 };
 
 struct BoardPacket {
     PacketType type;
-    int board[6][7];
+    uint32_t board[6][7];
+};
+
+struct GameOverPacket {
+    PacketType type;
+    uint8_t winner;
+};
+
+struct ReadyPacket {
+    PacketType type;
 };

@@ -23,8 +23,7 @@ private:
 
     void SendBoard();
 
-    void BroadcastGameOver();
-
+    void BroadcastGameOver(uint8_t winner);
 
     ENetHost* host = nullptr;
 

@@ -1,5 +1,6 @@
 #include "server.hpp"
 #include "packets.hpp"
+#include <cstdint>
 #include <cstring>
 #include <enet/enet.h>
 #include <iostream>
@@ -29,40 +30,26 @@ bool Server::Start(int port, int maxClients) {
 
 
 void Server::HandleConnect(ENetEvent& event) {
-    Player pl;
-    pl.connected = true;
-    pl.peer = event.peer;
-    event.peer->data = &pl;
-
-    if (players.empty()) {
-        pl.id = 1;
-        players.push_back(pl);
-
-        std::cout << "Player 1 connected" << std::endl;
-        return;
-    } else if (players.size() == 1) {
-        pl.id = 2;
-        players.push_back(pl);
-
-        std::cout << "Player 2 connected" << std::endl;
-        return;
-    } else if (players.size() >= 2) {
+    if (players.size() >= 2) {
         std::cerr << "No more space for new players" << std::endl;
         return;
     }
-    return;
+    Player pl;
+    pl.connected = true;
+    pl.peer = event.peer;
+    pl.id = players.empty() ? 1 : 2;
+    players.push_back(pl);
+    event.peer->data = &players.back();
+    std::cout << "Player " << pl.id << " connected" << std::endl;
 }
 
 void Server::HandleDisconnect(ENetEvent& event) {
     Player* player = static_cast<Player*>(event.peer->data);
-
-    if (player)
-    {
+    if (player) {
         std::cout << "Player " << player->id << " disconnected" << std::endl;
-
-        player->peer = nullptr;
-        player->id = -1;
+        players.remove_if([player](const Player& p) { return &p == player; });
     }
+    event.peer->data = nullptr;
 }
 
 void Server::SendBoard() {
@@ -81,19 +68,57 @@ void Server::SendBoard() {
     enet_host_broadcast(host, 0, packet);
 }
 
-void Server::BroadcastGameOver() {
-
+void Server::BroadcastGameOver(uint8_t winner) {
+    GameOverPacket data{
+        GAME_OVER,
+        winner
+    };
+    ENetPacket* packet = enet_packet_create(
+        &data,
+        sizeof(data),
+        ENET_PACKET_FLAG_RELIABLE
+    );
+    enet_host_broadcast(host, 0, packet);
 }
 
 void Server::HandlePacket(ENetEvent& event) {
-    MovePacket* packet = (MovePacket*)event.packet->data;
+    if (event.packet->dataLength < sizeof(PacketType)) {
+        enet_packet_destroy(event.packet);
+        return;
+    }
+    PacketType type = *reinterpret_cast<PacketType*>(event.packet->data);
+    Player* sender = static_cast<Player*>(event.peer->data);
 
-    game.MakeMove(packet->player, packet->column);
-    
-    SendBoard();
+    if (type == MOVE && event.packet->dataLength >= sizeof(MovePacket)) {
+        if (sender && !game.game_over) {
+            MovePacket* packet = (MovePacket*)event.packet->data;
+            if (game.MakeMove(sender->id, packet->column)) {
+                SendBoard();
+                if (game.CheckWin(sender->id)) {
+                    game.game_over = true;
+                    BroadcastGameOver(sender->id);
+                }
+            }
+        }
+    }
+    else if (type == READY && event.packet->dataLength >= sizeof(ReadyPacket)) {
+        if (sender && game.game_over) {
+            sender->ready = true;
+            std::cout << "Player " << sender->id << " is ready" << std::endl;
 
-    if (game.CheckWin(packet->player))
-        BroadcastGameOver();
+            bool allReady = players.size() == 2;
+            for (auto& p : players)
+                if (!p.ready) allReady = false;
+
+            if (allReady) {
+                game.EndGame();
+                for (auto& p : players) p.ready = false;
+                SendBoard();
+            }
+        }
+    }
+
+    enet_packet_destroy(event.packet);
 }
 
 void Server::Run() {
