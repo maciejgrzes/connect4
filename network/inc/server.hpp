@@ -2,6 +2,7 @@
 
 #include <enet/enet.h>
 #include <list>
+#include <cstdint>
 
 #include "../../src/inc/structs.hpp"
 #include "player.hpp"
