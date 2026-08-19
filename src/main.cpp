@@ -1,3 +1,8 @@
+#define WIN32_LEAN_AND_MEAN
+#define NOGDI
+#define NOUSER
+#define NOMINMAX
+
 #include <raylib.h>
 #include <enet/enet.h>
 #include <string>
