@@ -38,9 +38,14 @@ void Server::HandleConnect(ENetEvent& event) {
     pl.connected = true;
     pl.peer = event.peer;
     pl.id = players.empty() ? 1 : 2;
+
     players.push_back(pl);
     event.peer->data = &players.back();
     std::cout << "Player " << pl.id << " connected" << std::endl;
+
+    PlayerJoinedPacket data {PLAYER_JOINED, (uint8_t)pl.id};
+    ENetPacket* packet = enet_packet_create(&data, sizeof(data), ENET_PACKET_FLAG_RELIABLE);
+    enet_peer_send(event.peer, 0, packet);
 }
 
 void Server::HandleDisconnect(ENetEvent& event) {
@@ -53,11 +58,13 @@ void Server::HandleDisconnect(ENetEvent& event) {
 }
 
 void Server::SendBoard() {
-    BoardPacket data{
+    BoardPacket data {
         PacketType::BOARD_UPDATE
     };
 
     std::memcpy(data.board, game.board, sizeof(game.board));
+
+    data.turn = game.turn;
 
     ENetPacket* packet = enet_packet_create(
         &data,

@@ -1,33 +1,36 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra
 
-SRC = src/main.cpp \
-      src/inc/funcs.cpp \
-      src/inc/structs.cpp \
-	  src/inc/button.cpp
+SERVER_SRCS = network/ntmain.cpp network/inc/server.cpp src/inc/structs.cpp
+CLIENT_SRCS = src/main.cpp src/inc/funcs.cpp src/inc/structs.cpp src/inc/button.cpp network/inc/client.cpp
 
-SRC_SERVER = network/ntmain.cpp \
-			 network/inc/server.cpp \
-			 src/inc/structs.cpp
+INCLUDES := -Iinclude -Inetwork/inc -Iclient/inc
 
-TARGET = connect4
-TARGET_SERVER = serv
+ifeq ($(OS),Windows_NT)
+    EXE_EXT = .exe
+    LIBS = -lenet -lraylib -lopengl32 -lgdi32 -lwinmm -lws2_32
+    STATIC_FLAGS = -static -static-libgcc -static-libstdc++
+else
+    UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Linux)
+        EXE_EXT :=
+        LIBS := -lenet -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+        STATIC_FLAGS :=
+    endif
+endif
 
-.PHONY: all clean run run_server
+SERVER_OUT := serv$(EXE_EXT)
+CLIENT_OUT := connect4$(EXE_EXT)
 
-all: $(TARGET) $(TARGET_SERVER)
+.PHONY: all server client clean windows-cross windows-cross-static
 
-$(TARGET): $(SRC)
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET) -lraylib
+all: server client
+
+server: $(SERVER_SRCS)
+	$(CXX) $(CXXFLAGS) $(STATIC_FLAGS) $(SERVER_SRCS) -o $(SERVER_OUT) $(INCLUDES) $(LIBS)
+
+client: $(CLIENT_SRCS)
+	$(CXX) $(CXXFLAGS) $(STATIC_FLAGS) $(CLIENT_SRCS) -o $(CLIENT_OUT) $(INCLUDES) $(LIBS)
 
 clean:
-	rm $(TARGET) $(TARGET_SERVER)
-
-run: $(TARGET)
-	./$(TARGET)
-
-$(TARGET_SERVER): $(SRC_SERVER)
-	$(CXX) $(CXXFLAGS) $(SRC_SERVER) -o $(TARGET_SERVER) -lenet
-
-run_server: $(TARGET_SERVER)
-	./$(TARGET_SERVER)
+	rm -f $(SERVER_OUT) $(CLIENT_OUT) client-win.exe client-win-static.exe

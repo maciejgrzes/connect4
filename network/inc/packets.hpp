@@ -18,6 +18,7 @@ struct MovePacket {
 struct BoardPacket {
     PacketType type;
     uint32_t board[6][7];
+    uint8_t turn;
 };
 
 struct GameOverPacket {
@@ -27,4 +28,9 @@ struct GameOverPacket {
 
 struct ReadyPacket {
     PacketType type;
+};
+
+struct PlayerJoinedPacket {
+    PacketType type;
+    uint8_t assignedId;
 };

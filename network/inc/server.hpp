@@ -3,7 +3,7 @@
 #include <enet/enet.h>
 #include <list>
 
-#include "../../inc/structs.hpp"
+#include "../../src/inc/structs.hpp"
 #include "player.hpp"
 
 class Server {

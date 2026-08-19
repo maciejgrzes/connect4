@@ -1,15 +1,18 @@
 #include <raylib.h>
+#include <enet/enet.h>
+#include <string>
 #include "inc/vars.hpp"
 #include "inc/funcs.hpp"
 #include "inc/structs.hpp"
 #include "inc/button.hpp"
+#include "../network/inc/client.hpp"
 using namespace std;
 
 enum class AppState {
     MENU,
     SINGLEPLAYER,
-    MULTIPLAYER_LOBBY,   // placeholder for host/join screen, built later
-    MULTIPLAYER_GAME     // placeholder, built once client networking exists
+    MULTIPLAYER_LOBBY,
+    MULTIPLAYER_GAME
 };
 
 int main() {
@@ -23,9 +26,15 @@ int main() {
     Button multiplayerBtn { {WIDTH/2.0f - 100, 290, 200, 60 }};
     Button quitBtn        { {WIDTH/2.0f - 100, 380, 200, 60 }};
 
+    Button hostBtn{ {WIDTH/2.0f - 100, 200, 200, 60 }};
+    Button joinBtn { {WIDTH/2.0f - 100, 290, 200, 60 }};
+
     Game game{};
     int winner = 0;
     bool winLineFound = false;
+
+    Client netClient;
+    const char* ip = "127.0.0.1";
 
     while (!WindowShouldClose()) {
         Vector2 pos = GetMousePosition();
@@ -66,11 +75,50 @@ int main() {
                 break;
             }
 
-            case AppState::MULTIPLAYER_LOBBY:
-            case AppState::MULTIPLAYER_GAME:
-                // built once client-side networking is wired up
+            case AppState::MULTIPLAYER_LOBBY: {
+                if (hostBtn.Pressed(pos)) {
+                    if (netClient.Connect(ip, 7777)) {
+                        state = AppState::MULTIPLAYER_GAME;
+                    } else {
+                        string connectError = "Couldn't connect. Is server running?";
+                    }
+                } else if (joinBtn.Pressed(pos)) {
+                    if (netClient.Connect(ip, 7777)) {
+                        state = AppState::MULTIPLAYER_GAME;
+                    } else {
+                        string connectError = "Couldn't connect. Is server running?";
+                    }
+                }
+
                 if (IsKeyPressed(KEY_ESCAPE)) state = AppState::MENU;
                 break;
+            }
+
+            case AppState::MULTIPLAYER_GAME: {
+                netClient.Poll();
+
+                if (!netClient.connected) {
+                    state = AppState::MENU;
+                    break;
+                }
+
+                if (!netClient.game.game_over && netClient.myPlayerId == netClient.game.turn
+                    && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                    for (int i = 0; i < COLS; i++)
+                        if (CheckCollisionPointRec(pos, GetColumnRect(i)))
+                            netClient.SendMove(i);
+                }
+
+                if (netClient.game.game_over && IsKeyPressed(KEY_SPACE)) {
+                    netClient.SendReady();
+                }
+
+                if (IsKeyPressed(KEY_ESCAPE)) {
+                    netClient.Disconnect();
+                    state = AppState::MENU;
+                }
+                break;
+            }
         }
 
         // ---- DRAW ----
@@ -106,17 +154,37 @@ int main() {
             }
 
             case AppState::MULTIPLAYER_LOBBY:
-                DrawText("Multiplayer coming soon...", WIDTH/2 - 150, 200, 20, WHITE);
+                DrawText("Multiplayer", WIDTH/2 - 110, 100, 40, WHITE);
+                joinBtn.Draw();
+                DrawText("Join", joinBtn.rec.x + 42, joinBtn.rec.y + 18, 20, BLACK);
+                hostBtn.Draw();
+                DrawText("Host", hostBtn.rec.x + 42, hostBtn.rec.y + 18, 20, BLACK);
                 break;
 
-            case AppState::MULTIPLAYER_GAME:
+            case AppState::MULTIPLAYER_GAME: {
+                DrawRectangleRounded(BoardBackground, 0.1, 15, GRAY);
+                DrawHoles();
+                DrawPreview(pos, netClient.game);
+                DrawChips(netClient.game);
+
+                if (netClient.game.game_over) {
+                    if (netClient.winner == 1) DrawText("Player 1 Wins!", 50, 50, 30, WHITE);
+                    else if (netClient.winner == 2) DrawText("Player 2 Wins!", 50, 50, 30, WHITE);
+                    for (size_t i = 0; i < netClient.game.winningCells.size(); i++) {
+                        Vector2 starPos = CellToScreen(netClient.game.winningCells[i].row, netClient.game.winningCells[i].col);
+                        DrawStar(starPos, 30, 10, 5, GOLD);
+                    }
+                    DrawText("Press SPACE when ready for next round", 50, 50, 20, WHITE);
+                }
                 break;
+            }
         }
 
         EndDrawing();
         if (game.game_over) game.EndGame();
     }
 
+    netClient.Disconnect();
     CloseWindow();
     return 0;
 }
