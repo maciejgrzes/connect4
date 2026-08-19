@@ -3,9 +3,12 @@ CXXFLAGS = -Wall -Wextra
 
 SRC = main.cpp \
       inc/funcs.cpp \
-      inc/structs.cpp
+      inc/structs.cpp \
+	  inc/button.cpp
 
-SRC_SERVER = network/server/server.cpp
+SRC_SERVER = network/ntmain.cpp \
+			 network/inc/server.cpp \
+			 inc/structs.cpp
 
 TARGET = connect4
 TARGET_SERVER = serv
@@ -24,7 +27,7 @@ run: $(TARGET)
 	./$(TARGET)
 
 $(TARGET_SERVER): $(SRC_SERVER)
-	$(CXX) $(CXXFLAGS) $(SRC_SERVER) -o $(TARGET_SERVER)
+	$(CXX) $(CXXFLAGS) $(SRC_SERVER) -o $(TARGET_SERVER) -lenet
 
 run_server: $(TARGET_SERVER)
 	./$(TARGET_SERVER)

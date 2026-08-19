@@ -151,6 +151,7 @@ void Game::EndGame() {
     if (game_over) {
         WaitTime(2);
         game_over = false;
+        turn = 0;
 
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
@@ -167,14 +168,10 @@ void Game::EndGame() {
 }
 
 bool Game::MakeMove(int player, int column) {
-    if (game_over) return false;
-    if (column < 0 || column >= COLS) return false;
-    if (player != 1 && player != 2) return false;
-    if (player != turn) return false;
-    if (heights[column] < 0) return false;
-
-    board[heights[column]][column] = player;
-    heights[column]--;
-    turn = (turn == 1) ? 2 : 1;
+    if (heights[column] >= 0) {
+        board[heights[column]][column] = player;
+        heights[column]--;
+        turn++;
+    }
     return true;
 }
