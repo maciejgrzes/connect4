@@ -1,14 +1,14 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra
 
-SRC = main.cpp \
-      inc/funcs.cpp \
-      inc/structs.cpp \
-	  inc/button.cpp
+SRC = src/main.cpp \
+      src/inc/funcs.cpp \
+      src/inc/structs.cpp \
+	  src/inc/button.cpp
 
 SRC_SERVER = network/ntmain.cpp \
 			 network/inc/server.cpp \
-			 inc/structs.cpp
+			 src/inc/structs.cpp
 
 TARGET = connect4
 TARGET_SERVER = serv
