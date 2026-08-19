@@ -9,7 +9,7 @@ INCLUDES := -Iinclude -Inetwork/inc -Iclient/inc
 ifeq ($(OS),Windows_NT)
     CXXFLAGS += -DWIN32_LEAN_AND_MEAN -DNOGDI -DNOUSER -DNOMINMAX
     EXE_EXT = .exe
-	LIBS = -lenet -lraylib -lglfw3 -lopengl32 -lgdi32 -lwinmm -lws2_32
+	LIBS = -lenet -lraylib C:/msys64/mingw64/lib/libglfw3.dll.a -lopengl32 -lgdi32 -lwinmm -lws2_32
     STATIC_FLAGS = -static -static-libgcc -static-libstdc++
 else
     UNAME_S := $(shell uname -s)
