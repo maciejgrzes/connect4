@@ -1,8 +1,8 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra
 
-SERVER_SRCS = network/ntmain.cpp network/inc/server.cpp src/inc/structs.cpp
-CLIENT_SRCS = src/main.cpp src/inc/funcs.cpp src/inc/structs.cpp src/inc/button.cpp network/inc/client.cpp
+SERVER_SRCS = network/ntmain.cpp network/inc/server.cpp src/inc/game.cpp
+CLIENT_SRCS = src/main.cpp src/inc/funcs.cpp src/inc/game.cpp src/inc/button.cpp network/inc/client.cpp src/inc/inputbox.cpp
 
 INCLUDES := -Iinclude -Inetwork/inc -Iclient/inc
 
@@ -34,4 +34,4 @@ client: $(CLIENT_SRCS)
 	$(CXX) $(CXXFLAGS) $(STATIC_FLAGS) $(CLIENT_SRCS) -o $(CLIENT_OUT) $(INCLUDES) $(LIBS)
 
 clean:
-	rm -f $(SERVER_OUT) $(CLIENT_OUT) client-win.exe client-win-static.exe
+	rm $(SERVER_OUT) $(CLIENT_OUT) client-win.exe client-win-static.exe

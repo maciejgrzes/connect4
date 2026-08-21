@@ -1,9 +1,10 @@
 #include <raylib.h>
 #include <enet/enet.h>
 #include <string>
+#include "inc/inputbox.hpp"
 #include "inc/vars.hpp"
 #include "inc/funcs.hpp"
-#include "inc/structs.hpp"
+#include "inc/game.hpp"
 #include "inc/button.hpp"
 #include "../network/inc/client.hpp"
 using namespace std;
@@ -29,12 +30,14 @@ int main() {
     Button hostBtn{ {WIDTH/2.0f - 100, 200, 200, 60 }};
     Button joinBtn { {WIDTH/2.0f - 100, 290, 200, 60 }};
 
+    InputBox ipBox = { {WIDTH/2.0f - 100, 400, 200, 40}, "", false, 32};
+
     Game game{};
     int winner = 0;
     bool winLineFound = false;
 
     Client netClient;
-    const char* ip = "192.168.1.6";
+    string ip = "192.168.1.6";
 
     while (!WindowShouldClose()) {
         Vector2 pos = GetMousePosition();
@@ -62,28 +65,35 @@ int main() {
                         if (CheckCollisionPointRec(pos, GetColumnRect(i)))
                             game.MakeMove((game.turn % 2 == 0) ? 1 : 2, i);
                 }
+
                 if (!game.game_over) {
                     if (game.CheckWin(1)) { winner = 1; game.game_over = true; }
                     else if (game.CheckWin(2)) { winner = 2; game.game_over = true; }
                 }
+
                 if (game.game_over && !winLineFound) {
                     game.FindWinningLine(winner);
                     winLineFound = true;
                 }
-                // Press ESC (or add a dedicated back-button) to return to menu
+
                 if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_CAPS_LOCK)) state = AppState::MENU;
                 break;
             }
 
             case AppState::MULTIPLAYER_LOBBY: {
+                ipBox.Update();
+                if (IsValidIPv4(ipBox.PushValue())) {
+                    ip = ipBox.PushValue();
+                }
+
                 if (hostBtn.Pressed(pos)) {
-                    if (netClient.Connect(ip, 7777)) {
+                    if (netClient.Connect(ip.c_str(), 7777)) {
                         state = AppState::MULTIPLAYER_GAME;
                     } else {
                         string connectError = "Couldn't connect. Is server running?";
                     }
                 } else if (joinBtn.Pressed(pos)) {
-                    if (netClient.Connect(ip, 7777)) {
+                    if (netClient.Connect(ip.c_str(), 7777)) {
                         state = AppState::MULTIPLAYER_GAME;
                     } else {
                         string connectError = "Couldn't connect. Is server running?";
@@ -128,12 +138,9 @@ int main() {
         switch (state) {
             case AppState::MENU: {
                 DrawText("Connect 4", WIDTH/2 - 110, 100, 40, WHITE);
-                singleplayerBtn.Draw();
-                DrawText("Single Player", singleplayerBtn.rec.x + 32, singleplayerBtn.rec.y + 18, 20, BLACK);
-                multiplayerBtn.Draw();
-                DrawText("Multiplayer", multiplayerBtn.rec.x + 42, multiplayerBtn.rec.y + 18, 20, BLACK);
-                quitBtn.Draw();
-                DrawText("Quit", quitBtn.rec.x + 80, quitBtn.rec.y + 18, 20, BLACK);
+                singleplayerBtn.Draw("Single Player");
+                multiplayerBtn.Draw("Multiplayer");
+                quitBtn.Draw("Quit");
                 break;
             }
 
@@ -155,10 +162,9 @@ int main() {
 
             case AppState::MULTIPLAYER_LOBBY:
                 DrawText("Multiplayer", WIDTH/2 - 110, 100, 40, WHITE);
-                joinBtn.Draw();
-                DrawText("Join", joinBtn.rec.x + 42, joinBtn.rec.y + 18, 20, BLACK);
-                hostBtn.Draw();
-                DrawText("Host", hostBtn.rec.x + 42, hostBtn.rec.y + 18, 20, BLACK);
+                joinBtn.Draw("Join");
+                hostBtn.Draw("Host");
+                ipBox.Draw("Ip: (Default is localhost)");
                 break;
 
             case AppState::MULTIPLAYER_GAME: {

@@ -1,9 +1,40 @@
 #include "funcs.hpp"
 #include "vars.hpp"
-#include "structs.hpp"
+#include "game.hpp"
 
 #include <cmath>
 #include <raylib.h>
+#include <string>
+#include <sstream>
+
+
+bool IsValidIPv4(std::string ip) {
+    std::stringstream ss(ip);
+    std::string octet;
+    int count = 0;
+
+    while (std::getline(ss, octet, '.')) {
+        count++;
+        if (count > 4) return false;
+
+        // must be non-empty, digits only, max 3 chars
+        if (octet.empty() || octet.size() > 3) return false;
+        for (char c : octet) {
+            if (!isdigit((unsigned char)c)) return false;
+        }
+
+        // reject leading zeros like "01" or "007" (but allow "0" itself)
+        if (octet.size() > 1 && octet[0] == '0') return false;
+
+        int value = std::stoi(octet);
+        if (value < 0 || value > 255) return false;
+    }
+
+    // must end without a trailing dot, and have exactly 4 parts
+    if (count != 4 || ip.back() == '.') return false;
+
+    return true;
+}
 
 Rectangle GetColumnRect(int col) {
     return {

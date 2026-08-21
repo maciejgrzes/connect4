@@ -1,7 +1,10 @@
 #pragma once
 
-#include "structs.hpp"
+#include "game.hpp"
 #include <raylib.h>
+#include <string>
+
+bool IsValidIPv4(std::string ip);
 
 Rectangle GetColumnRect(int col);
 

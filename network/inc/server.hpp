@@ -4,7 +4,7 @@
 #include <list>
 #include <cstdint>
 
-#include "../../src/inc/structs.hpp"
+#include "../../src/inc/game.hpp"
 #include "player.hpp"
 
 class Server {

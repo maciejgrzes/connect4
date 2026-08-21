@@ -1,4 +1,4 @@
-#include "structs.hpp"
+#include "game.hpp"
 #include "vars.hpp"
 #include <vector>
 

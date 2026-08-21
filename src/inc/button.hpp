@@ -1,6 +1,7 @@
 #pragma once
 
 #include <raylib.h>
+#include <string>
 
 struct Button {
     Rectangle rec = {};
@@ -8,7 +9,7 @@ struct Button {
     Color colorHovering = GRAY;
     bool hovering = false;
 
-    void Draw();
+    void Draw(std::string name);
 
     bool Pressed(Vector2 pos);
 };

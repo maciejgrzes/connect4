@@ -2,7 +2,7 @@
 
 #include <enet/enet.h>
 
-#include "../../src/inc/structs.hpp"
+#include "../../src/inc/game.hpp"
 
 class Client {
 public:
