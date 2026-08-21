@@ -13,7 +13,7 @@ bool Server::Start(int port, int maxClients) {
         return false;
     }
 
-    ENetAddress address = {0};
+    ENetAddress address{};
     address.host = ENET_HOST_ANY;
     address.port = port;
 
@@ -69,9 +69,8 @@ void Server::HandleDisconnect(ENetEvent& event) {
 
 void Server::SendBoard() {
     std::cout << "[SendBoard] enter, game.turn=" << game.turn << std::endl;
-    BoardPacket data {
-        PacketType::BOARD_UPDATE
-    };
+    BoardPacket data{};
+    data.type = PacketType::BOARD_UPDATE;
 
     std::cout << "[SendBoard] memcpy board, sizeof(game.board)=" << sizeof(game.board)
                << " sizeof(data.board)=" << sizeof(data.board) << std::endl;
