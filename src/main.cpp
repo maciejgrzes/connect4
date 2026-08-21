@@ -82,8 +82,9 @@ int main() {
 
             case AppState::MULTIPLAYER_LOBBY: {
                 ipBox.Update();
-                if (IsValidIPv4(ipBox.PushValue())) {
-                    ip = ipBox.PushValue();
+                string pushedValue = ipBox.PushValue();
+                if (IsValidIPv4(pushedValue)) {
+                    ip = pushedValue;
                 }
 
                 if (hostBtn.Pressed(pos)) {
