@@ -34,4 +34,4 @@ client: $(CLIENT_SRCS)
 	$(CXX) $(CXXFLAGS) $(STATIC_FLAGS) $(CLIENT_SRCS) -o $(CLIENT_OUT) $(INCLUDES) $(LIBS)
 
 clean:
-	rm $(SERVER_OUT) $(CLIENT_OUT) client-win.exe client-win-static.exe
+	rm $(SERVER_OUT) $(CLIENT_OUT)
