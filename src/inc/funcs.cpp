@@ -88,7 +88,7 @@ void DrawPreview(Vector2 pos, Game game) {
     for (int i = 0; i < COLS; i++) {
         if (CheckCollisionPointRec(pos, GetColumnRect(i)) && game.heights[i] >= 0) {
             Vector2 pos = CellToScreen(game.heights[i], i);
-            DrawCircle(pos.x, pos.y, hole_radius, (game.turn % 2 == 0) ? semi_red : semi_blue);
+            DrawCircle(pos.x, pos.y, hole_radius, (game.turn == 1) ? semi_red : semi_blue);
         }
     }   
 }

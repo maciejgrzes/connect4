@@ -149,19 +149,15 @@ bool Game::FindWinningLine(int player) {
 
 void Game::EndGame() {
     if (game_over) {
-        WaitTime(2);
         game_over = false;
-        turn = 0;
+        turn = 1;
 
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
+        for (int i = 0; i < ROWS; i++)
+            for (int j = 0; j < COLS; j++)
                 board[i][j] = 0;
-            }
-        }
 
-        for (int i = 0; i < COLS; i++) {
+        for (int i = 0; i < COLS; i++)
             heights[i] = 5;
-        }
 
         winningCells.clear();
     }
