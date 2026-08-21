@@ -168,10 +168,14 @@ void Game::EndGame() {
 }
 
 bool Game::MakeMove(int player, int column) {
-    if (heights[column] >= 0) {
-        board[heights[column]][column] = player;
-        heights[column]--;
-        turn++;
-    }
+    if (game_over) return false;
+    if (column < 0 || column >= COLS) return false;
+    if (player != 1 && player != 2) return false;
+    if (player != turn) return false;
+    if (heights[column] < 0) return false;
+
+    board[heights[column]][column] = player;
+    heights[column]--;
+    turn = (turn == 1) ? 2 : 1;
     return true;
 }

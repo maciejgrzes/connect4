@@ -10,13 +10,13 @@ struct Cell {
 
 
 struct Game {
-    int turn;
+    int turn = 1;
 
-    bool game_over;
+    bool game_over = false;
 
     int heights[COLS] = {5, 5, 5, 5, 5, 5, 5};
 
-    int board[ROWS][COLS];
+    int board[ROWS][COLS] = {};
 
     std::vector<Cell> winningCells;
 

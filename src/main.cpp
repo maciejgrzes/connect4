@@ -188,7 +188,11 @@ int main() {
         }
 
         EndDrawing();
-        if (game.game_over) game.EndGame();
+        if (game.game_over && IsKeyPressed(KEY_SPACE)) {
+            game.EndGame();
+            winner = 0;
+            winLineFound = false;
+        }
     }
 
     netClient.Disconnect();
