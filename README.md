@@ -10,7 +10,7 @@ A classic Connect Four game built with [raylib](https://www.raylib.com/) for ren
 
 ## Getting Started
 
-You can just download the compiled game from the releases page (NOTE THE GAME HAS STILL MANY MANY BUGS)
+You can just download the compiled game from the releases page (NOTE THE GAME HAS STILL MANY MANY BUGS).
 
 Or you can build it by yourself.
 
@@ -36,10 +36,6 @@ This produces:
 | `serv` (or `serv.exe`) | Linux / Windows | The dedicated multiplayer server |
 
 Run `make` from a native Linux shell for Linux binaries, or from an MSYS2/mingw64 shell on Windows for a statically-linked Windows build — the same `Makefile` detects the platform automatically.
-
-### Cross-compiling a Windows `.exe` from Linux
-
-If you'd rather not leave Linux, and have `mingw-w64` installed along with Windows-target builds of raylib and ENet:
 
 ## Running the Game
 
@@ -110,4 +106,3 @@ Client B ──READY──▶  Server  ──GAME_OVER───▶   both client
 
 - [ ] Sound effects
 - [ ] Reconnect handling for dropped connections
-

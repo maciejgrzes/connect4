@@ -1,2 +1,4 @@
 connect4
 serv
+releases
+*.tar.gz
