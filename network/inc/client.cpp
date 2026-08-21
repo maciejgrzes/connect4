@@ -60,7 +60,7 @@ void Client::Poll() {
     if (!host) return;
 
     ENetEvent event;
-    while (enet_host_service(host, &event, 0) > 0) {   // 0 timeout — non-blocking
+    while (enet_host_service(host, &event, 0) > 0) {
         switch (event.type) {
             case ENET_EVENT_TYPE_RECEIVE: {
                 if (event.packet->dataLength < sizeof(PacketType)) {
@@ -73,11 +73,24 @@ void Client::Poll() {
                     BoardPacket* p = (BoardPacket*)event.packet->data;
                     std::memcpy(game.board, p->board, sizeof(game.board));
                     game.turn = p->turn;
+
+                    for (int i = 0; i < COLS; i++) {
+                        int h = -1;
+                        for (int r = ROWS - 1; r >= 0; r--) {
+                            if (game.board[r][i] == 0) { h = r; break; }
+                        }
+                        game.heights[i] = h;
+                    }
+
+                    game.game_over = false;
+                    winner = 0;
+                    game.winningCells.clear();
                 }
                 else if (type == GAME_OVER && event.packet->dataLength >= sizeof(GameOverPacket)) {
                     GameOverPacket* p = (GameOverPacket*)event.packet->data;
                     game.game_over = true;
                     winner = p->winner;
+                    game.FindWinningLine(winner);
                 }
                 else if (type == PLAYER_JOINED && event.packet->dataLength >= sizeof(PlayerJoinedPacket)) {
                     PlayerJoinedPacket* p = (PlayerJoinedPacket*)event.packet->data;
