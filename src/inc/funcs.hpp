@@ -17,3 +17,5 @@ void DrawHoles();
 void DrawPreview(Vector2 pos, Game game);
 
 void DrawChips(Game game);
+
+bool FullBoard(Game game);

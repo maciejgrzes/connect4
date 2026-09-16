@@ -105,3 +105,14 @@ void DrawChips(Game game) {
         }
     }
 }
+
+bool FullBoard(Game game) {
+    int dims = ROWS * COLS;
+    int count = 0;
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if (game.board[i][j] != 0) count++;
+        }
+    }
+    return (count == dims) ? true : false;
+}

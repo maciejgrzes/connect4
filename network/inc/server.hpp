@@ -14,6 +14,7 @@ public:
 
     void Run();
 
+    bool verbose = false;
 private:
 
     void HandleConnect(ENetEvent& event);

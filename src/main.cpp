@@ -63,12 +63,13 @@ int main() {
                 if (!game.game_over && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     for (int i = 0; i < COLS; i++)
                         if (CheckCollisionPointRec(pos, GetColumnRect(i)))
-                            game.MakeMove((game.turn % 2 == 0) ? 1 : 2, i);
+                            game.MakeMove((game.turn % 2 == 0) ? 2 : 1, i);
                 }
 
                 if (!game.game_over) {
                     if (game.CheckWin(1)) { winner = 1; game.game_over = true; }
                     else if (game.CheckWin(2)) { winner = 2; game.game_over = true; }
+                    else if (!game.CheckWin(1) && !game.CheckWin(2) && FullBoard(game)) { winner = 3; game.game_over = true; }
                 }
 
                 if (game.game_over && !winLineFound) {
@@ -153,6 +154,7 @@ int main() {
                 if (game.game_over) {
                     if (winner == 1) DrawText("Player 1 Wins!", 50, 50, 30, WHITE);
                     else if (winner == 2) DrawText("Player 2 Wins!", 50, 50, 30, WHITE);
+                    else if (winner == 3) DrawText("Draw!", 50, 50, 30, WHITE);
                     for (size_t i = 0; i < game.winningCells.size(); i++) {
                         Vector2 starPos = CellToScreen(game.winningCells[i].row, game.winningCells[i].col);
                         DrawStar(starPos, 30, 10, 5, GOLD);
@@ -177,6 +179,7 @@ int main() {
                 if (netClient.game.game_over) {
                     if (netClient.winner == 1) DrawText("Player 1 Wins!", 50, 50, 30, WHITE);
                     else if (netClient.winner == 2) DrawText("Player 2 Wins!", 50, 50, 30, WHITE);
+                    else if (netClient.winner == 3) DrawText("Draw!", 50, 50, 30, WHITE);
                     for (size_t i = 0; i < netClient.game.winningCells.size(); i++) {
                         Vector2 starPos = CellToScreen(netClient.game.winningCells[i].row, netClient.game.winningCells[i].col);
                         DrawStar(starPos, 30, 10, 5, GOLD);

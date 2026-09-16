@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra
 
-SERVER_SRCS = network/ntmain.cpp network/inc/server.cpp src/inc/game.cpp
+SERVER_SRCS = network/ntmain.cpp network/inc/server.cpp src/inc/game.cpp src/inc/funcs.cpp
 CLIENT_SRCS = src/main.cpp src/inc/funcs.cpp src/inc/game.cpp src/inc/button.cpp network/inc/client.cpp src/inc/inputbox.cpp
 
 INCLUDES := -Iinclude -Inetwork/inc -Iclient/inc
