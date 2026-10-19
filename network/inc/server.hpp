@@ -7,7 +7,7 @@
 #include "../../src/inc/game.hpp"
 #include "player.hpp"
 
-class Server {
+class Server : public Game {
 public:
 
     bool Start(int port, int maxClients);
@@ -30,6 +30,4 @@ private:
     ENetHost* host = nullptr;
 
     std::list<Player> players;
-
-    Game game;
 };

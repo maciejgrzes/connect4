@@ -1,6 +1,5 @@
 #include "server.hpp"
 #include "packets.hpp"
-#include "../../src/inc/funcs.hpp"
 #include <cstdint>
 #include <cstring>
 #include <enet/enet.h>
@@ -71,15 +70,15 @@ void Server::HandleDisconnect(ENetEvent& event) {
 }
 
 void Server::SendBoard() {
-    VLOG("[SendBoard] enter, game.turn=" << game.turn);
+    VLOG("[SendBoard] enter, turn=" << turn);
     BoardPacket data{};
     data.type = PacketType::BOARD_UPDATE;
 
-    VLOG("[SendBoard] memcpy board, sizeof(game.board)=" << sizeof(game.board)
+    VLOG("[SendBoard] memcpy board, sizeof(board)=" << sizeof(board)
          << " sizeof(data.board)=" << sizeof(data.board));
-    std::memcpy(data.board, game.board, sizeof(game.board));
+    std::memcpy(data.board, board, sizeof(board));
 
-    data.turn = game.turn;
+    data.turn = turn;
 
     VLOG("[SendBoard] creating packet, sizeof(data)=" << sizeof(data));
     ENetPacket* packet = enet_packet_create(
@@ -130,14 +129,14 @@ void Server::HandlePacket(ENetEvent& event) {
              << " sizeof(MovePacket)=" << sizeof(MovePacket));
 
         if (event.packet->dataLength >= sizeof(MovePacket)) {
-            if (sender && !game.game_over) {
+            if (sender && !game_over) {
                 MovePacket* packet = (MovePacket*)event.packet->data;
                 VLOG("[HandlePacket] MovePacket column=" << packet->column
                      << " packet->player(client-claimed, IGNORED)=" << packet->player);
 
-                VLOG("[HandlePacket] calling game.MakeMove(sender->id=" << sender->id
+                VLOG("[HandlePacket] calling MakeMove(sender->id=" << sender->id
                      << ", column=" << packet->column << ")...");
-                bool moved = game.MakeMove(sender->id, packet->column);
+                bool moved = MakeMove(sender->id, packet->column);
                 VLOG("[HandlePacket] MakeMove returned " << moved);
 
                 if (moved) {
@@ -145,25 +144,26 @@ void Server::HandlePacket(ENetEvent& event) {
                     SendBoard();
 
                     VLOG("[HandlePacket] SendBoard() returned, calling CheckWin(1)...");
-                    bool p1Won = game.CheckWin(1);
+                    bool p1Won = CheckWin(1);
                     VLOG("[HandlePacket] CheckWin(1) returned " << p1Won);
 
                     VLOG("[HandlePacket] calling CheckWin(2)...");
-                    bool p2Won = game.CheckWin(2);
+                    bool p2Won = CheckWin(2);
                     VLOG("[HandlePacket] CheckWin(2) returned " << p2Won);
 
                     if (p1Won || p2Won) {
                         uint8_t winner = p1Won ? 1 : 2;
-                        game.game_over = true;
+                        game_over = true;
                         VLOG("[HandlePacket] calling BroadcastGameOver(" << (int)winner << ")...");
                         BroadcastGameOver(winner);
                         VLOG("[HandlePacket] BroadcastGameOver returned");
                     } else {
                         VLOG("[HandlePacket] no winner, calling FullBoard(game)...");
-                        bool full = FullBoard(game);
+                        bool full = FullBoard();
+                        FullBoard();
                         VLOG("[HandlePacket] FullBoard returned " << full);
                         if (full) {
-                            game.game_over = true;
+                            game_over = true;
                             VLOG("[HandlePacket] board full, no winner -> draw, calling BroadcastGameOver(0)...");
                             BroadcastGameOver(0);
                             VLOG("[HandlePacket] BroadcastGameOver returned");
@@ -172,7 +172,7 @@ void Server::HandlePacket(ENetEvent& event) {
                 }
             } else {
                 VLOG("[HandlePacket] MOVE ignored: sender=" << sender
-                     << " game.game_over=" << game.game_over);
+                     << " game_over=" << game_over);
             }
         } else {
             VLOG("[HandlePacket] MOVE packet too small, ignoring");
@@ -183,7 +183,7 @@ void Server::HandlePacket(ENetEvent& event) {
              << " sizeof(ReadyPacket)=" << sizeof(ReadyPacket));
 
         if (event.packet->dataLength >= sizeof(ReadyPacket)) {
-            if (sender && game.game_over) {
+            if (sender && game_over) {
                 sender->ready = true;
                 VLOG("[HandlePacket] Player " << sender->id << " is ready");
 
@@ -195,10 +195,10 @@ void Server::HandlePacket(ENetEvent& event) {
                 VLOG("[HandlePacket] allReady=" << allReady);
 
                 if (allReady) {
-                    VLOG("[HandlePacket] calling game.EndGame()...");
-                    game.EndGame();
-                    VLOG("[HandlePacket] EndGame() returned, game.turn=" << game.turn
-                         << " game.game_over=" << game.game_over);
+                    VLOG("[HandlePacket] calling EndGame()...");
+                    EndGame();
+                    VLOG("[HandlePacket] EndGame() returned, turn=" << turn
+                         << " game_over=" << game_over);
                     for (auto& p : players) p.ready = false;
                     VLOG("[HandlePacket] calling SendBoard() after reset...");
                     SendBoard();
@@ -206,7 +206,7 @@ void Server::HandlePacket(ENetEvent& event) {
                 }
             } else {
                 VLOG("[HandlePacket] READY ignored: sender=" << sender
-                     << " game.game_over=" << game.game_over);
+                     << " game_over=" << game_over);
             }
         }
     }

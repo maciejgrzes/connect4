@@ -71,26 +71,26 @@ void Client::Poll() {
 
                 if (type == BOARD_UPDATE && event.packet->dataLength >= sizeof(BoardPacket)) {
                     BoardPacket* p = (BoardPacket*)event.packet->data;
-                    std::memcpy(game.board, p->board, sizeof(game.board));
-                    game.turn = p->turn;
+                    std::memcpy(board, p->board, sizeof(board));
+                    turn = p->turn;
 
                     for (int i = 0; i < COLS; i++) {
                         int h = -1;
                         for (int r = ROWS - 1; r >= 0; r--) {
-                            if (game.board[r][i] == 0) { h = r; break; }
+                            if (board[r][i] == 0) { h = r; break; }
                         }
-                        game.heights[i] = h;
+                        heights[i] = h;
                     }
 
-                    game.game_over = false;
+                    game_over = false;
                     winner = 0;
-                    game.winningCells.clear();
+                    winningCells.clear();
                 }
                 else if (type == GAME_OVER && event.packet->dataLength >= sizeof(GameOverPacket)) {
                     GameOverPacket* p = (GameOverPacket*)event.packet->data;
-                    game.game_over = true;
+                    game_over = true;
                     winner = p->winner;
-                    game.FindWinningLine(winner);
+                    FindWinningLine(winner);
                 }
                 else if (type == PLAYER_JOINED && event.packet->dataLength >= sizeof(PlayerJoinedPacket)) {
                     PlayerJoinedPacket* p = (PlayerJoinedPacket*)event.packet->data;

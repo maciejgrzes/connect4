@@ -4,7 +4,7 @@
 
 #include "../../src/inc/game.hpp"
 
-class Client {
+class Client : public Game{
 public:
     bool Connect(const char* ip, int port, int timeoutMs = 5000);
     
@@ -21,8 +21,6 @@ public:
     
     int myPlayerId = 0;
     
-    Game game;
-
     int winner = 0;
 
 private:

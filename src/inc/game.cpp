@@ -175,3 +175,15 @@ bool Game::MakeMove(int player, int column) {
     turn = (turn == 1) ? 2 : 1;
     return true;
 }
+
+
+bool Game::FullBoard() {
+    int dims = ROWS * COLS;
+    int count = 0;
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if (board[i][j] != 0) count++;
+        }
+    }
+    return (count == dims) ? true : false;
+}

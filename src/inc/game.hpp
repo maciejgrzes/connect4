@@ -9,7 +9,8 @@ struct Cell {
 };
 
 
-struct Game {
+class Game {
+public:
     int turn = 1;
 
     bool game_over = false;
@@ -28,4 +29,6 @@ struct Game {
     void EndGame();
 
     bool MakeMove(int player, int column);
+
+    bool FullBoard();
 };
